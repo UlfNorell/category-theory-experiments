@@ -61,9 +61,7 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
       naturality : ∀ {X Y : Obj C} (f : X ⇒C Y) → map G f ∘ η X ≈ η Y ∘ map F f
 
   idNat : ∀ {F : Fun C D} → NatTrans F F
-  idNat {F} = record
-    { η = λ _ → id
-    ; naturality = λ f → idR (map F f) ⟨≈⟩ʳ idL (map F f) }
+  idNat {F} = record { η = λ _ → id; naturality = λ f → idRL }
 
   _∘Nat_ : ∀ {F G H : Fun C D} → NatTrans G H → NatTrans F G → NatTrans F H
   _∘Nat_ {F} {G} {H} f g = record

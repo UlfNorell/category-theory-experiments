@@ -1,7 +1,7 @@
 
 open import Category.Base
 
-module Category.FUN {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} where
+module Category.FUN {a a₁ a₂ b b₁ b₂} (C : Cat a a₁ a₂) (D : Cat b b₁ b₂) where
 
 open import Category.Functor
 

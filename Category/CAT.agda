@@ -20,10 +20,10 @@ CAT a b c = record
     in record
     { to = record
       { η = λ X → id
-      ; naturality = λ f → idR _ ⟨≈⟩ʳ idL _ }
+      ; naturality = λ f → idRL }
     ; from = record
       { η = λ X → id
-      ; naturality = λ f → idR _ ⟨≈⟩ʳ idL _ }
+      ; naturality = λ f → idRL }
     ; idF = λ _ → idL _
     ; idG = λ _ → idL _ }
   ; idR   = λ {C D} F →
@@ -32,10 +32,10 @@ CAT a b c = record
     in record
     { to = record
       { η = λ X → id
-      ; naturality = λ f → idR _ ⟨≈⟩ʳ idL _ }
+      ; naturality = λ f → idRL }
     ; from = record
       { η = λ X → id
-      ; naturality = λ f → idR _ ⟨≈⟩ʳ idL _ }
+      ; naturality = λ f → idRL }
     ; idF = λ _ → idL _
     ; idG = λ _ → idL _ }
   ; cong∘ = λ {C D E F F′ G G′} F=F′ G=G′ →
@@ -47,8 +47,8 @@ CAT a b c = record
   ; assoc = λ {A B C D} F G H →
     let open Cat D
     in record
-    { to   = record { η = λ _ → id; naturality = λ _ → idR _ ⟨≈⟩ʳ idL _ }
-    ; from = record { η = λ _ → id; naturality = λ _ → idR _ ⟨≈⟩ʳ idL _ }
+    { to   = record { η = λ _ → id; naturality = λ _ → idRL }
+    ; from = record { η = λ _ → id; naturality = λ _ → idRL }
     ; idF  = λ _ → idL _
     ; idG  = λ _ → idL _ }
   }
