@@ -55,6 +55,15 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
     _⇒D_ = Cat._⇒_ D
   open Cat D hiding (Obj)
 
+  Const : (X : Obj D) → Fun C D
+  Const X = record
+     { Map = λ _ → X
+     ; map = λ _ → id
+     ; cong-map = λ _ → ≈refl
+     ; resp-id = ≈refl
+     ; resp-∘ = λ _ _ → ≈sym (idL _)
+     }
+
   record NatTrans (F G : Fun C D) : Set (a ⊔ a₁ ⊔ b₁ ⊔ b₂) where
     field
       η : ∀ (X : Obj C) → Map F X ⇒D Map G X
