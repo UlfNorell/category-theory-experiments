@@ -136,5 +136,5 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
 
 module _ {a a₁ a₂} {C : Cat a a₁ a₂} where
 
-  ObjFun : (X : Obj C) → Fun One C
-  ObjFun X = Const X
+  Const₁ : (X : Obj C) → Fun One C
+  Const₁ X = Const X

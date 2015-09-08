@@ -6,10 +6,10 @@ open import Category.Base
 open import Category.Functor
 open import Logic.Equivalence
 
-module _ {a a₁ a₂ b b₁ b₂ c c₁ c₂} {A : Cat a a₁ a₂} {B : Cat b b₁ b₂} {C : Cat c c₁ c₂} where
+open Cat using (Obj)
+open Fun
 
-  open Cat using (Obj)
-  open Fun
+module _ {a a₁ a₂ b b₁ b₂ c c₁ c₂} {A : Cat a a₁ a₂} {B : Cat b b₁ b₂} {C : Cat c c₁ c₂} where
 
   module E = IsEquivalence
 
@@ -64,3 +64,11 @@ module _ {a a₁ a₂ b b₁ b₂ c c₁ c₂} {A : Cat a a₁ a₂} {B : Cat b 
     Cat.idR _↓_ _ = Cat.idR A _ , Cat.idR B _
     Cat.cong∘ _↓_ eq = Cat.cong∘ A (fst eq) *** Cat.cong∘ B (snd eq)
     Cat.assoc _↓_ _ _ _ = Cat.assoc A _ _ _ , Cat.assoc B _ _ _
+
+module _ {a a₁ a₂} {A : Cat a a₁ a₂} (X : Obj A) where
+
+  Slice : Cat _ _ _
+  Slice = Id {C = A} ↓ Const₁ X
+
+  Coslice : Cat _ _ _
+  Coslice = Const₁ X ↓ Id {C = A}
