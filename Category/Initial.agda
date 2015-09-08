@@ -14,11 +14,11 @@ module _ {a b c} (Ca : Cat a b c) where
   record Initial : Set (a ⊔ b ⊔ c) where
     field
       I : Obj
-      uniqArrow : ∀ {A} → ∃! f ∈ I ⇒ A st ⊤
+      uniqArrow : ∀ {A} → ∃! λ (f : I ⇒ A) → ⊤
 
-    open module EU {A} = ExistUnique (uniqArrow {A}) using () renaming (f to ¡) public
+    open module EU {A} = ∃! (uniqArrow {A}) using () renaming (f to ¡) public
     uniq : ∀ {A} (f : I ⇒ A) → f ≈ ¡
-    uniq f = ExistUnique.uniq uniqArrow f _
+    uniq f = ∃!.uniq uniqArrow f _
 
   {-# NO_ETA Initial #-}
 
