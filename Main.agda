@@ -9,3 +9,4 @@ import Category.Isomorphism
 import Category.CAT
 import Category.SET
 import Category.FUN
+import Category.Comma

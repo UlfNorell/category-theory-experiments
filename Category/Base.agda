@@ -35,6 +35,8 @@ record Cat a b c : Set (lsuc (a ⊔ b ⊔ c)) where
   cong∘R   : ∀ {X Y Z} {f : Y ⇒ Z} {g g′ : X ⇒ Y} → g ≈ g′ → f ∘ g ≈ f ∘ g′
   cong∘R = cong∘ ≈refl
 
+{-# NO_ETA Cat #-}
+
 --- The dual category ---
 
 _op : ∀ {a b c} → Cat a b c → Cat a b c

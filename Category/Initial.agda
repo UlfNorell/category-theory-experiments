@@ -1,32 +1,45 @@
 
-open import Category.Base
-
-module Category.Initial {a b c} (Ca : Cat a b c) where
+module Category.Initial where
 
 open import Prelude
+open import Category.Base
 open import Category.Isomorphism
+import Category.Unique as Uniq
 
-open Cat Ca
+module _ {a b c} (Ca : Cat a b c) where
 
-record Initial : Set (a ⊔ b ⊔ c) where
-  field
-    I : Obj
-    ¡ : ∀ {A} → I ⇒ A
+  open Cat Ca
+  open Uniq Ca
+
+  record Initial : Set (a ⊔ b ⊔ c) where
+    field
+      I : Obj
+      uniqArrow : ∀ {A} → ∃! f ∈ I ⇒ A st ⊤
+
+    open module EU {A} = ExistUnique (uniqArrow {A}) using () renaming (f to ¡) public
     uniq : ∀ {A} (f : I ⇒ A) → f ≈ ¡
+    uniq f = ExistUnique.uniq uniqArrow f _
 
-record Terminal : Set (a ⊔ b ⊔ c) where
-  field
-    T : Obj
-    ! : ∀ {A} → A ⇒ T
-    uniq : ∀ {A} (f : A ⇒ T) → f ≈ !
+  {-# NO_ETA Initial #-}
 
-initIso : (A B : Initial) → Iso Ca (Initial.I A) (Initial.I B)
-initIso A B =
-  record { to   = ¡A
-         ; from = ¡B
-         ; ida  = uniqA _ ⟨≈⟩ʳ uniqA _
-         ; idb  = uniqB _ ⟨≈⟩ʳ uniqB _
-         }
-  where
-    open Initial A renaming (I to IA; ¡ to ¡A; uniq to uniqA)
-    open Initial B renaming (I to IB; ¡ to ¡B; uniq to uniqB)
+  record Terminal : Set (a ⊔ b ⊔ c) where
+    field
+      T : Obj
+      ! : ∀ {A} → A ⇒ T
+      uniq : ∀ {A} (f : A ⇒ T) → f ≈ !
+
+-- Some proofs
+module _ {a b c} {Ca : Cat a b c} where
+
+  open Cat Ca
+
+  initIso : (A B : Initial Ca) → Iso Ca (Initial.I A) (Initial.I B)
+  initIso A B =
+    record { to   = ¡A
+           ; from = ¡B
+           ; ida  = uniqA _ ⟨≈⟩ʳ uniqA _
+           ; idb  = uniqB _ ⟨≈⟩ʳ uniqB _
+           }
+    where
+      open Initial Ca A renaming (I to IA; ¡ to ¡A; uniq to uniqA)
+      open Initial Ca B renaming (I to IB; ¡ to ¡B; uniq to uniqB)
