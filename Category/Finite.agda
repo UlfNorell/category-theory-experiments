@@ -1,27 +1,31 @@
 
 module Category.Finite where
 
-open import Prelude
+open import Prelude hiding (id; _∘_)
 open import Category.Base
 
+open Cat
+
 Zero : Cat lzero lzero lzero
-Zero = record
-  { Obj     = ⊥
-  ; _⇒_     = λ ()
-  ; id      = λ {}
-  ; _∘_     = λ {}
-  ; _≈_     = λ {}
-  ; isEquiv = λ {}
-  ; idL     = λ {}
-  ; idR     = λ {}
-  ; cong∘   = λ {}
-  ; assoc   = λ {}
-  }
+Obj     Zero = ⊥
+_⇒_     Zero ()
+id      Zero {}
+_∘_     Zero {}
+_≈_     Zero {}
+isEquiv Zero {}
+idL     Zero {}
+idR     Zero {}
+cong∘   Zero {}
+assoc   Zero {}
 
 One : Cat lzero lzero lzero
-One = record
-  { Obj = ⊤
-  ; _⇒_ = λ _ _ → ⊤
-  ; _≈_ = λ _ _ → ⊤
-  ; isEquiv = record {}
-  }
+Obj     One = ⊤
+_⇒_     One _ _ = ⊤
+id      One = _
+_∘_     One = _
+_≈_     One _ _ = ⊤
+isEquiv One = record{}
+idL     One = _
+idR     One = _
+cong∘   One = _
+assoc   One = _
