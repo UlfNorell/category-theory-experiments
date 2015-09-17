@@ -42,8 +42,7 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
     open module Bang X = CommaMorph _ _ (IArr {X}) using () renaming (h to !; homomorphic to hom)
 
     private
-     module _ (Y : Obj D) (g : X ⇒ Map U Y) where
-
+     module M (Y : Obj D) (g : X ⇒ Map U Y) where
       Z : CommaObj (Const₁ X) U
       CommaObj.α Z = _
       CommaObj.β Z = Y
@@ -59,6 +58,7 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
       Uniq.∃!.sat  uniq = hom Z ʳ⟨≈⟩ idR _
       Uniq.∃!.uniq uniq h eq = snd (iUniq (α h eq) _)
 
+    open M
     open InitialMorphism′
     oneWay : InitialMorphism′ X U
     A    oneWay = β

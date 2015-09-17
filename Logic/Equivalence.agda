@@ -21,4 +21,4 @@ record IsEquivalence {a b} {A : Set a} (_≈_ : A → A → Set b) : Set (a ⊔ 
   _ʳ⟨≈⟩ʳ_ : ∀ {x y z : A} → y ≈ x → z ≈ y → x ≈ z
   y=x ʳ⟨≈⟩ʳ z=y = ≈sym y=x ⟨≈⟩ ≈sym z=y
 
-{-# NO_ETA IsEquivalence #-}
+-- {-# NO_ETA IsEquivalence #-}

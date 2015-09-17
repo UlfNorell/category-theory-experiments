@@ -3,21 +3,21 @@ module Category.SET where
 
 open import Prelude
 open import Category.Base
+open import Logic.Equivalence
+
+open Cat hiding (≈refl; ≈sym; ≈trans; id; _∘_)
+open IsEquivalence
 
 SET : ∀ a → Cat (lsuc a) a a
-SET a = record
-  { Obj = Set a
-  ; _⇒_ = λ A B → A → B
-  ; id = id
-  ; _∘_ = λ f g → f ∘ g
-  ; _≈_ = λ f g → ∀ {x y} → x ≡ y → f x ≡ g y
-  ; isEquiv = record
-    { ≈refl = cong _
-    ; ≈sym  = λ f → sym ∘ f ∘ sym
-    ; ≈trans = λ f g x → f refl ⟨≡⟩ g x
-    }
-  ; idL   = λ _ → cong _
-  ; idR   = λ _ → cong _
-  ; cong∘ = λ f g → f ∘ g
-  ; assoc = λ _ _ _ → cong _
-  }
+Obj (SET a)                    = Set a
+_⇒_ (SET a) A B                = A → B
+Cat.id (SET a)                 = id
+Cat._∘_ (SET a) f g            = f ∘ g
+_≈_ (SET a) f g                = ∀ {x y} → x ≡ y → f x ≡ g y
+≈refl  (isEquiv (SET a))       = cong _
+≈sym   (isEquiv (SET a)) f     = sym ∘ f ∘ sym
+≈trans (isEquiv (SET a)) f g x = f refl ⟨≡⟩ g x
+idL (SET a)                    = cong _
+idR (SET a)                    = cong _
+cong∘ (SET a) f g              = f ∘ g
+assoc (SET a)                  = cong _

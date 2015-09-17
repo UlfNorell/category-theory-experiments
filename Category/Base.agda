@@ -3,6 +3,7 @@ module Category.Base where
 
 open import Prelude hiding (id; _∘_)
 open import Logic.Equivalence
+open import Logic.Setoid
 
 record Cat a b c : Set (lsuc (a ⊔ b ⊔ c)) where
   infix 4 _≈_
@@ -14,17 +15,25 @@ record Cat a b c : Set (lsuc (a ⊔ b ⊔ c)) where
     _∘_ : ∀ {A B C} → (B ⇒ C) → (A ⇒ B) → (A ⇒ C)
     _≈_     : ∀ {A B} → (A ⇒ B) → (A ⇒ B) → Set c
     isEquiv : ∀ {A B} → IsEquivalence (_≈_ {A} {B})
-    idL     : ∀ {A B} (f : A ⇒ B) → id ∘ f ≈ f
-    idR     : ∀ {A B} (f : A ⇒ B) → f ∘ id ≈ f
+    idL     : ∀ {A B} {f : A ⇒ B} → id ∘ f ≈ f
+    idR     : ∀ {A B} {f : A ⇒ B} → f ∘ id ≈ f
     cong∘   : ∀ {X Y Z} {f f′ : Y ⇒ Z} {g g′ : X ⇒ Y} → f ≈ f′ → g ≈ g′ → f ∘ g ≈ f′ ∘ g′
-    assoc   : ∀ {A B C D} (f : C ⇒ D) (g : B ⇒ C) (h : A ⇒ B) →
+    assoc   : ∀ {A B C D} {f : C ⇒ D} {g : B ⇒ C} {h : A ⇒ B} →
               (f ∘ g) ∘ h ≈ f ∘ (g ∘ h)
+
+  infixl 9 cong∘
+  syntax cong∘ f g = f ∘≈ g
 
   private module E {A} {B} = IsEquivalence (isEquiv {A} {B})
   open E public
 
+  Hom : Obj → Obj → Setoid b c
+  Setoid.Carrier (Hom X Y) = X ⇒ Y
+  Setoid._≈_    (Hom X Y) = _≈_
+  Setoid.isEquiv (Hom X Y) = isEquiv
+
   idLR : ∀ {A B} {f : A ⇒ B} → id ∘ f ≈ f ∘ id
-  idLR = idL _ ⟨≈⟩ʳ idR _
+  idLR = idL ⟨≈⟩ʳ idR
 
   idRL : ∀ {A B} {f : A ⇒ B} → f ∘ id ≈ id ∘ f
   idRL = ≈sym idLR
@@ -39,17 +48,15 @@ record Cat a b c : Set (lsuc (a ⊔ b ⊔ c)) where
 
 --- The dual category ---
 
+open Cat
 _op : ∀ {a b c} → Cat a b c → Cat a b c
-C op = record
-  { Obj  = Obj
-  ; _⇒_ = flip _⇒_
-  ; id   = id
-  ; _∘_ = flip _∘_
-  ; _≈_    = _≈_
-  ; isEquiv = isEquiv
-  ; idL     = idR
-  ; idR     = idL
-  ; cong∘   = flip cong∘
-  ; assoc   = λ f g h → ≈sym (assoc h g f)
-  }
-  where open Cat C
+Obj  (C op) = Obj C
+_⇒_ (C op) = flip (_⇒_ C) 
+id (C op) = id C
+_∘_ (C op) = flip (_∘_ C)
+_≈_ (C op) = _≈_ C
+isEquiv (C op) = isEquiv C
+idL (C op) = idR C
+idR (C op) = idL C
+cong∘ (C op) = flip (cong∘ C)
+assoc (C op) = ≈sym C (assoc C)

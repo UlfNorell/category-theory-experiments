@@ -10,22 +10,15 @@ open import Category.Finite
 open Cat using (Obj)
 
 record Fun {a₁ a₂ a₃ b₁ b₂ b₃} (C : Cat a₁ a₂ a₃) (D : Cat b₁ b₂ b₃) : Set (a₁ ⊔ a₂ ⊔ a₃ ⊔ b₁ ⊔ b₂ ⊔ b₃) where
-  open Cat hiding (_≈_)
-  open Cat D using (_≈_)
-  private
-    _⇒C_ = _⇒_ C
-    _⇒D_ = _⇒_ D
-    idC  = id C
-    idD  = id D
-    _∘C_ = _∘_ C
-    _∘D_ = _∘_ D
-    _≈C_ = Cat._≈_ C
+  open Cat
+  private module C = Cat C
+  private module D = Cat D
   field
     Map     : Obj C → Obj D
-    map     : ∀ {X Y : Obj C} → (X ⇒C Y) → (Map X ⇒D Map Y)
-    cong-map : ∀ {X Y : Obj C} {f g : X ⇒C Y} → f ≈C g →  map f ≈ map g
-    resp-id : ∀ {X : Obj C} → map (idC {X}) ≈ idD
-    resp-∘  : ∀ {X Y Z : Obj C} (f : Y ⇒C Z) (g : X ⇒C Y) → map (f ∘C g) ≈ map f ∘D map g
+    map     : ∀ {X Y : Obj C} → (X C.⇒ Y) → (Map X D.⇒ Map Y)
+    cong-map : ∀ {X Y : Obj C} {f g : X C.⇒ Y} → f C.≈ g →  map f D.≈ map g
+    resp-id : ∀ {X : Obj C} → map (C.id {X}) D.≈ D.id
+    resp-∘  : ∀ {X Y Z : Obj C} (f : Y C.⇒ Z) (g : X C.⇒ Y) → map (f C.∘ g) D.≈ map f D.∘ map g
 {-# NO_ETA Fun #-}
 
 module _ {a b c} {C : Cat a b c} where
@@ -40,18 +33,27 @@ module _ {a b c} {C : Cat a b c} where
   resp-id  Id     = ≈refl
   resp-∘   Id _ _ = ≈refl
 
-module _ {a a₁ a₂ b b₁ b₂ c c₁ c₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} {E : Cat c c₁ c₂} where
+module _ {a a₁ a₂ b b₁ b₂ c c₁ c₂} {A : Cat a a₁ a₂} {B : Cat b b₁ b₂} {C : Cat c c₁ c₂} where
 
   open Fun
-  open Cat E
+  private module A = Cat A
+  private module B = Cat B
+  open Cat C
 
   infixl 9 _○_
-  _○_ : Fun D E → Fun C D → Fun C E
-  Map      (F ○ G) A   = Map F (Map G A)
+  _○_ : Fun B C → Fun A B → Fun A C
+  Map      (F ○ G) X   = Map F (Map G X)
   map      (F ○ G) f   = map F (map G f)
   cong-map (F ○ G) eq  = cong-map F (cong-map G eq)
   resp-id  (F ○ G)     = cong-map F (resp-id G) ⟨≈⟩ resp-id F
   resp-∘   (F ○ G) f g = cong-map F (resp-∘ G f g) ⟨≈⟩ resp-∘ F (map G f) (map G g)
+
+  _ʳ○_ : Fun (B op) C → Fun (A op) B → Fun A C
+  Map (F ʳ○ G) X = Map F (Map G X)
+  map (F ʳ○ G) f = map F (map G f) 
+  cong-map (F ʳ○ G) f=g = cong-map F (cong-map G f=g)
+  resp-id (F ʳ○ G) = cong-map F (resp-id G) ⟨≈⟩ resp-id F 
+  resp-∘ (F ʳ○ G) f g = cong-map F (resp-∘ G g f) ⟨≈⟩ resp-∘ F (map G f) (map G g)
 
 module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} where
 
@@ -68,36 +70,36 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
   map      (Const X) _   = id
   cong-map (Const X) _   = ≈refl
   resp-id  (Const X)     = ≈refl
-  resp-∘   (Const X) _ _ = ≈sym (idL _)
+  resp-∘   (Const X) _ _ = ≈sym idL
 
   record NatTrans (F G : Fun C D) : Set (a ⊔ a₁ ⊔ b₁ ⊔ b₂) where
     field
       η : ∀ (X : Obj C) → Map F X ⇒D Map G X
-      naturality : ∀ {X Y : Obj C} (f : X ⇒C Y) → map G f ∘ η X ≈ η Y ∘ map F f
+      natural : ∀ {X Y : Obj C} (f : X ⇒C Y) → map G f ∘ η X ≈ η Y ∘ map F f
   {-# NO_ETA NatTrans #-}
 
   open NatTrans
   idNat : ∀ {F : Fun C D} → NatTrans F F
   η          idNat _ = id
-  naturality idNat _ = idRL
+  natural idNat _ = idRL
 
+  infixl 9 _∘Nat_
   _∘Nat_ : ∀ {F G H : Fun C D} → NatTrans G H → NatTrans F G → NatTrans F H
   η          (f ∘Nat g) X = η f X ∘ η g X
-  naturality (f ∘Nat g) h =
-    assoc _ _ _ ʳ⟨≈⟩
-    cong∘L (naturality f h) ⟨≈⟩
-    assoc _ _ _ ⟨≈⟩
-    cong∘R (naturality g h) ⟨≈⟩ʳ
-    assoc _ _ _
+  natural (f ∘Nat g) h =
+    assoc ʳ⟨≈⟩
+    cong∘L (natural f h) ⟨≈⟩
+    assoc ⟨≈⟩
+    cong∘R (natural g h) ⟨≈⟩ʳ
+    assoc
 
   record NatIso (F G : Fun C D) : Set (a ⊔ a₁ ⊔ b₁ ⊔ b₂) where
     open NatTrans
     field
       to   : NatTrans F G
       from : NatTrans G F
-      idF  : ∀ (X : Obj C) → η from X ∘ η to X ≈ id
-      idG  : ∀ (X : Obj C) → η to X ∘ η from X ≈ id
-  {-# NO_ETA NatIso #-}
+      idF  : ∀ {X : Obj C} → η from X ∘ η to X ≈ id
+      idG  : ∀ {X : Obj C} → η to X ∘ η from X ≈ id
 
   infix 4 _≋_
   _≋_ = NatIso
@@ -106,10 +108,10 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
   open NatTrans
 
   ≋refl : {F : Fun C D} → F ≋ F
-  to   ≋refl   = idNat
-  from ≋refl   = idNat
-  idF  ≋refl _ = idL _
-  idG  ≋refl _ = idL _
+  to   ≋refl = idNat
+  from ≋refl = idNat
+  idF  ≋refl = idL
+  idG  ≋refl = idL
 
   ≋sym : {F G : Fun C D} → F ≋ G → G ≋ F
   to   (≋sym F=G) = from F=G
@@ -118,16 +120,16 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
   idG  (≋sym F=G) = idF F=G
 
   ≋trans : {F G H : Fun C D} → F ≋ G → G ≋ H → F ≋ H
-  to   (≋trans F=G G=H)   = to G=H ∘Nat to F=G
-  from (≋trans F=G G=H)   = from F=G ∘Nat from G=H
-  idF  (≋trans F=G G=H) _ =
-    assoc _ _ _ ⟨≈⟩
-    cong∘R (assoc _ _ _ ʳ⟨≈⟩ cong∘L (idF G=H _) ⟨≈⟩ idL _) ⟨≈⟩
-    idF F=G _
-  idG  (≋trans F=G G=H) _ =
-    assoc _ _ _ ⟨≈⟩
-    cong∘R (assoc _ _ _ ʳ⟨≈⟩ cong∘L (idG F=G _) ⟨≈⟩ idL _) ⟨≈⟩
-    idG G=H _
+  to   (≋trans F=G G=H) = to G=H ∘Nat to F=G
+  from (≋trans F=G G=H) = from F=G ∘Nat from G=H
+  idF  (≋trans F=G G=H) =
+    assoc ⟨≈⟩
+    cong∘R (assoc ʳ⟨≈⟩ cong∘L (idF G=H) ⟨≈⟩ idL) ⟨≈⟩
+    idF F=G
+  idG  (≋trans F=G G=H) =
+    assoc ⟨≈⟩
+    cong∘R (assoc ʳ⟨≈⟩ cong∘L (idG F=G) ⟨≈⟩ idL) ⟨≈⟩
+    idG G=H
 
   ≋Equiv : IsEquivalence _≋_
   IsEquivalence.≈refl  ≋Equiv = ≋refl
