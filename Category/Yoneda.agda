@@ -26,8 +26,8 @@ module _ {a b c} (C : Cat a b c) where
   app (map (HomFun X) f) g            = f ∘ g
   ext (map (HomFun X) f) g            = cong∘R g
   ≈ext (cong-map (HomFun X) f=g) x=y = cong∘ f=g x=y
-  ≈ext (resp-id (HomFun X)) x=y      = idL _ ⟨≈⟩ x=y
-  ≈ext (resp-∘ (HomFun X) f g) x=y   = assoc _ _ _ ⟨≈⟩ cong∘R (cong∘R x=y)
+  ≈ext (resp-id (HomFun X)) x=y      = idL ⟨≈⟩ x=y
+  ≈ext (resp-∘ (HomFun X) f g) x=y   = assoc ⟨≈⟩ cong∘R (cong∘R x=y)
 
 module _ {a} (C : Cat a a a) where
 
@@ -39,7 +39,7 @@ module _ {a} (C : Cat a a a) where
 
   open NatTrans
 
-  Set^C×C = Cross (FUN C (SETOID a a)) C
+  Set^C×C = FUN C (SETOID a a) [×] C
 
   LHS : Fun Set^C×C (SETOID a a)
   Map LHS (F , X) = Hom (FUN C (SETOID a a)) (HomFun C X) F   -- setoid of natural transformations HomFun X → F
@@ -55,7 +55,7 @@ module _ {a} (C : Cat a a a) where
     cong-map G h=k ∙≈ f=f′ Y ∙≈ i=j Y ∙≈ g=g′
   ≈ext (≈ext (resp-id LHS {F , X}) {f} {g} f=g Y) {i} {j} i=j =
     let open IsEquivalence (Setoid.isEquiv (Map F Y)) in
-    ≈ext (natural f i) (Cat.≈refl C) ⟨≈⟩ f=g Y ∙≈ Cat.≈trans C (idR _) i=j
+    ≈ext (natural f i) (Cat.≈refl C) ⟨≈⟩ f=g Y ∙≈ Cat.≈trans C idR i=j
   ≈ext (≈ext (resp-∘ LHS {F , X} {G , Y} {H , Z} (f , g) (i , j)) {h} {k} h=k W) {s} {t} s=t =
     let open IsEquivalence (Setoid.isEquiv (Map G Z)) in
     cong-map H s=t ∙≈ reflˢ (η f Z) ∙≈ ≈sym (natural i g ∙≈ Setoid.≈sym (Map F Y) (h=k Y ∙≈ Cat.≈refl C) ⟨≈⟩
@@ -79,7 +79,7 @@ module _ {a} (C : Cat a a a) where
   ≈ext (natural (Iso.to yoneda) {F , X} {G , Y} (α , f)) {β} {γ} β=γ =
     let open IsEquivalence (Setoid.isEquiv (Map G Y)) in
     natural α f ∙≈ β=γ X ∙≈ Cat.≈refl C ⟨≈⟩ʳ resp-id G ∙≈ reflˢ (η α Y) ∙≈
-      Setoid.≈sym (Map F Y) (Setoid.≈trans (Map F Y) (natural γ f ∙≈ Cat.≈refl C) (reflˢ (η γ Y) ∙≈ idR f))
+      Setoid.≈sym (Map F Y) (Setoid.≈trans (Map F Y) (natural γ f ∙≈ Cat.≈refl C) (reflˢ (η γ Y) ∙≈ idR))
   app (η (app (η (Iso.from yoneda) (F , X)) x) Y) f = map F f ∙ x
   ext (η (app (η (Iso.from yoneda) (F , X)) x) Y) f = cong-map F f ∙≈ Setoid.≈refl (Map F X)
   ≈ext (natural (app (η (Iso.from yoneda) (F , X)) x) {Y} {Z} f) {i} {j} i=j =
@@ -93,5 +93,5 @@ module _ {a} (C : Cat a a a) where
   ≈ext (≈ext (Iso.ida yoneda (F , X)) {α} {β} α=β Y) {f} {g} f=g =
     let open IsEquivalence (Setoid.isEquiv (Map F Y)) in
     natural α f ∙≈ Cat.≈refl C ⟨≈⟩
-    α=β Y ∙≈ Cat.≈trans C (idR _) f=g
+    α=β Y ∙≈ Cat.≈trans C idR f=g
   ≈ext (Iso.idb yoneda (F , X)) {x} {y} x=y = resp-id F ∙≈ x=y
