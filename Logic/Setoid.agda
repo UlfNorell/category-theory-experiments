@@ -12,6 +12,7 @@ record Setoid a b : Set (lsuc (a ⊔ b)) where
   open IsEquivalence isEquiv public
 
 record _⇒ˢ_ {a a₁ b b₁} (A : Setoid a a₁) (B : Setoid b b₁) : Set (a ⊔ a₁ ⊔ b ⊔ b₁) where
+  no-eta-equality
   open Setoid
   open Setoid A using () renaming (_≈_ to _≈A_)
   open Setoid B using () renaming (_≈_ to _≈B_)
@@ -21,7 +22,6 @@ record _⇒ˢ_ {a a₁ b b₁} (A : Setoid a a₁) (B : Setoid b b₁) : Set (a 
   infixr 30 app ext
   syntax app f g = f ∙ g
   syntax ext f g = f ⊜ g
-{-# NO_ETA _⇒ˢ_ #-}
 
 open _⇒ˢ_
 

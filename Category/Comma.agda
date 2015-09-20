@@ -21,19 +21,19 @@ module _ {a a₁ a₂ b b₁ b₂ c c₁ c₂} {A : Cat a a₁ a₂} {B : Cat b 
   module _ (S : Fun A C) (T : Fun B C) where
 
     record CommaObj : Set (a ⊔ b ⊔ c₁) where
+      no-eta-equality
       field
         α : Obj A
         β : Obj B
         f : Map S α ⇒ Map T β
-    {-# NO_ETA CommaObj #-}
 
     record CommaMorph (X Y : CommaObj) : Set (a₁ ⊔ b₁ ⊔ c₂) where
+      no-eta-equality
       open CommaObj
       field
         g : α X A.⇒ α Y
         h : β X B.⇒ β Y
         homomorphic : f Y ∘ map S g ≈ map T h ∘ f X
-    {-# NO_ETA CommaMorph #-}
 
     open CommaMorph
     open CommaObj

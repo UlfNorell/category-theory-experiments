@@ -12,6 +12,7 @@ module _ {a b c} (Ca : Cat a b c) where
   open Uniq Ca
 
   record Initial : Set (a ⊔ b ⊔ c) where
+    no-eta-equality
     field
       I : Obj
       uniqArrow : ∀ {A} → ∃! λ (f : I ⇒ A) → ⊤
@@ -20,9 +21,8 @@ module _ {a b c} (Ca : Cat a b c) where
     uniq : ∀ {A} (f : I ⇒ A) → f ≈ ¡
     uniq f = ∃!.uniq uniqArrow f _
 
-  {-# NO_ETA Initial #-}
-
   record Terminal : Set (a ⊔ b ⊔ c) where
+    no-eta-equality
     field
       T : Obj
       ! : ∀ {A} → A ⇒ T

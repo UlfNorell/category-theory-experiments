@@ -6,6 +6,7 @@ open import Logic.Equivalence
 open import Logic.Setoid
 
 record Cat a b c : Set (lsuc (a ⊔ b ⊔ c)) where
+  no-eta-equality
   infix 4 _≈_
   infixl 9 _∘_
   field
@@ -43,8 +44,6 @@ record Cat a b c : Set (lsuc (a ⊔ b ⊔ c)) where
 
   cong∘R   : ∀ {X Y Z} {f : Y ⇒ Z} {g g′ : X ⇒ Y} → g ≈ g′ → f ∘ g ≈ f ∘ g′
   cong∘R = cong∘ ≈refl
-
-{-# NO_ETA Cat #-}
 
 --- The dual category ---
 

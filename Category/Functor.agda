@@ -10,6 +10,7 @@ open import Category.Finite
 open Cat using (Obj)
 
 record Fun {a₁ a₂ a₃ b₁ b₂ b₃} (C : Cat a₁ a₂ a₃) (D : Cat b₁ b₂ b₃) : Set (a₁ ⊔ a₂ ⊔ a₃ ⊔ b₁ ⊔ b₂ ⊔ b₃) where
+  no-eta-equality
   open Cat
   private module C = Cat C
   private module D = Cat D
@@ -19,7 +20,6 @@ record Fun {a₁ a₂ a₃ b₁ b₂ b₃} (C : Cat a₁ a₂ a₃) (D : Cat b�
     cong-map : ∀ {X Y : Obj C} {f g : X C.⇒ Y} → f C.≈ g →  map f D.≈ map g
     resp-id : ∀ {X : Obj C} → map (C.id {X}) D.≈ D.id
     resp-∘  : ∀ {X Y Z : Obj C} (f : Y C.⇒ Z) (g : X C.⇒ Y) → map (f C.∘ g) D.≈ map f D.∘ map g
-{-# NO_ETA Fun #-}
 
 module _ {a b c} {C : Cat a b c} where
 
@@ -73,10 +73,10 @@ module _ {a a₁ a₂ b b₁ b₂} {C : Cat a a₁ a₂} {D : Cat b b₁ b₂} w
   resp-∘   (Const X) _ _ = ≈sym idL
 
   record NatTrans (F G : Fun C D) : Set (a ⊔ a₁ ⊔ b₁ ⊔ b₂) where
+    no-eta-equality
     field
       η : ∀ (X : Obj C) → Map F X ⇒D Map G X
       natural : ∀ {X Y : Obj C} (f : X ⇒C Y) → map G f ∘ η X ≈ η Y ∘ map F f
-  {-# NO_ETA NatTrans #-}
 
   open NatTrans
   idNat : ∀ {F : Fun C D} → NatTrans F F
